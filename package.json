@@ -1,0 +1,17 @@
+{
+  "name": "tumor-negro",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "nedb": "^1.8.0",
+    "node-schedule": "^1.2.4",
+    "telebot": "^1.2.3",
+    "tumblr.js": "^1.1.1"
+  }
+}
