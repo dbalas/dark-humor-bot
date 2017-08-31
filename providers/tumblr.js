@@ -46,6 +46,7 @@ function getImage () {
       before: date
     }, (err, posts) => {
       if (err) return reject(err)
+      console.log(JSON.stringify(posts, null, 4))
       let cleanPosts = _.filter(posts, { type: 'photo' })
 
       // Check medias

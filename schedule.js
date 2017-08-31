@@ -30,9 +30,9 @@ module.exports = (bot) => {
                 notification: true
               }
             ).then((result) => {
-              console.log(result)
+              console.log('YEAH', result)
             }).catch((err) => {
-              console.error(err)
+              console.error('GET IMAGE ERROR', err)
             })
           })
         }).catch((err) => {
