@@ -38,7 +38,6 @@ module.exports = (bot) => {
         }).catch((err) => {
           console.error(err)
         })
-
     })
   })
 

@@ -37,7 +37,6 @@ function _filterPosts (posts) {
   })
 }
 
-
 function getImage () {
   let date = new Date()
   date.setDate(date.getDate() - 2)
@@ -52,12 +51,11 @@ function getImage () {
       // Check medias
       _filterPosts(cleanPosts)
         .then((posts) => {
-
           // Sort by note (likes?)
           posts = _.orderBy(posts, ['note_count', 'timestamp'], ['asc', 'desc'])
           if (posts.length > 0) {
             let post = posts[0]
-            
+
             // Save media for checking
             _addMedia(post)
             resolve({
@@ -77,5 +75,3 @@ function getImage () {
 module.exports = {
   getImage
 }
-
-getImage()

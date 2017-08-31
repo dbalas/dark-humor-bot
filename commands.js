@@ -1,5 +1,4 @@
 const Actions = require('./actions')
-const DB = require('./db')
 
 function S (data) {
   return JSON.stringify(data)
@@ -9,22 +8,37 @@ function P (data) {
   return JSON.parse(data)
 }
 
-const HOURS = [['8:00', '9:00', '10:00', '11:00'], ['12:00', '13:00', '14:00', '15:00'], ['16:00', '17:00', '18:00', '19:00'], ['20:00', '21:00', '22:00', '23:00']]
+const HOURS = [['7:00', '8:00', '9:00'], ['10:00', '11:00', '12:00'], ['13:00', '14:00', '15:00'], ['16:00', '17:00', '18:00'], ['19:00', '20:00', '21:00'], ['22:00', '23:00']]
 
-function _showHours(bot, id) {
+function _showToggleHours (bot, hours) {
   let hourButtons = HOURS.map((hourRow) => {
     return hourRow.map((hour) => {
-      return bot.inlineButton(hour, {
+      let btnMsg = (hours.includes(hour)) ? `${hour} ✅` : hour
+      return bot.inlineButton(btnMsg, {
         callback: S({
-          action: 'addHour',
+          action: 'toggleHour',
           data: hour
         })
       })
     })
   })
 
-  let replyMarkup = bot.inlineKeyboard(hourButtons)
-  bot.sendMessage(id, 'Selecciona algunas horas (luego puedes desactivarlas utilizando /oras tranquilo ioputa)', { replyMarkup })
+  return bot.inlineKeyboard(hourButtons)
+}
+
+function _listarl (bot, chatId) {
+  Actions.getHours(chatId)
+    .then((hours) => {
+      let replyMarkup = _showToggleHours(bot, hours)
+      bot.sendMessage(chatId, 'Horicas ricas hoiga', { replyMarkup })
+        .then(() => {})
+        .catch((err) => {
+          console.error(err)
+        })
+    })
+    .catch((err) => {
+      console.error(err)
+    })
 }
 
 module.exports = (bot) => {
@@ -34,14 +48,13 @@ module.exports = (bot) => {
       .then((schedule) => {
         bot.sendMessage(chatId, '¡Hola! Soy el bot de Tumor Negro, me encargaré de mandarte mierda de la buena cada día. \n Puedes ver todos los comandos y más info en /ajuda')
         setTimeout(() => {
-          _showHours(bot, chatId)
+          _listarl(bot, chatId)
         }, 1000)
       })
       .catch((err) => {
         bot.sendMessage(chatId, 'ERROR')
         console.error(err)
       })
-
   })
 
   bot.on('/ajuda', (msg) => {
@@ -62,30 +75,55 @@ module.exports = (bot) => {
 
   bot.on('/listarl', (msg) => {
     let chatId = msg.chat.id
-    // TODO
-    bot.sendMessage(chatId, 'TODO 🛠')
+    _listarl(bot, chatId)
   })
 
   bot.on('/chapar', (msg) => {
     let chatId = msg.chat.id
-    // TODO
-    bot.sendMessage(chatId, 'TODO 🛠')
+    Actions.setActive(chatId, false)
+      .then(() => {
+        bot.sendMessage(chatId, 'Vale 🖕')
+      })
+      .catch((err) => {
+        console.error(err)
+      })
   })
 
   bot.on('/deschapar', (msg) => {
     let chatId = msg.chat.id
-    // TODO
-    bot.sendMessage(chatId, 'TODO 🛠')
+    Actions.setActive(chatId, false)
+      .then(() => {
+        bot.sendMessage(chatId, 'Bien!!!! B=====D💦')
+      })
+      .catch((err) => {
+        console.error(err)
+      })
   })
 
   bot.on('callbackQuery', msg => {
-    // User message alert
     let chatId = msg.message.chat.id
     let payload = P(msg.data)
-    Actions[payload.action](chatId, payload.data)
+    Actions[payload.action](bot, msg, payload.data)
       .then((result) => {
-        bot.sendMessage(chatId, `${payload.data} analdida 👍`)
         bot.answerCallbackQuery(msg.id)
+        // Nasty
+        if (payload.action === 'toggleHour') {
+          Actions.getHours(chatId)
+            .then((hours) => {
+              let replyMarkup = _showToggleHours(bot, hours)
+              bot.editMessageReplyMarkup({
+                chatId: chatId,
+                messageId: msg.message.message_id
+              }, { replyMarkup })
+                .then(() => {})
+                .catch((err) => {
+                  console.error(err)
+                })
+            })
+            .catch((err) => {
+              console.error(err)
+            })
+        }
       })
       .catch((err) => {
         bot.sendMessage(chatId, 'ERROR')
