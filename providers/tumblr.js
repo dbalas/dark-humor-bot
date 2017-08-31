@@ -64,7 +64,7 @@ function getImage () {
               url: post.photos[0].original_size.url
             })
           } else {
-            resolve()
+            reject()
           }
         })
         .catch(reject)
