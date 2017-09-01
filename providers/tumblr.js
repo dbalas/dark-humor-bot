@@ -39,7 +39,7 @@ function _filterPosts (posts) {
 
 function getImage () {
   let date = new Date()
-  date.setDate(date.getDate() - 2)
+  date.setDate(date.getDate() - 1)
   date = date.setHours(0)
   return new Promise((resolve, reject) => {
     client.taggedPosts('humor negro', {

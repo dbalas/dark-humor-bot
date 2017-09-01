@@ -20,12 +20,11 @@ module.exports = (bot) => {
       Tumbrl.getImage()
         .then((image) => {
           groups.forEach((group) => {
-            let caption = (image.caption) ? `${image.caption} - ${image.from}` : image.from
             bot.sendPhoto(
               group.id,
               image.url,
               {
-                caption,
+                caption: image.from,
                 serverDownload: true,
                 notification: true
               }
