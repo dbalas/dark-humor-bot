@@ -42,7 +42,7 @@ function getImage () {
   date.setDate(date.getDate() - 1)
   date = date.setHours(0)
   return new Promise((resolve, reject) => {
-    client.taggedPosts('humor negro', {
+    client.taggedPosts('humornegro', {
       before: date
     }, (err, posts) => {
       if (err) return reject(err)
