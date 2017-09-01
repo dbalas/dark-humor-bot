@@ -42,7 +42,7 @@ function getImage () {
   date.setDate(date.getDate() - 1)
   date = date.setHours(0)
   return new Promise((resolve, reject) => {
-    client.taggedPosts('humornegro', {
+    client.taggedPosts('black humour', {
       before: date
     }, (err, posts) => {
       if (err) return reject(err)
@@ -76,3 +76,5 @@ function getImage () {
 module.exports = {
   getImage
 }
+
+getImage()
