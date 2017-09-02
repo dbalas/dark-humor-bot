@@ -76,5 +76,3 @@ function getImage () {
 module.exports = {
   getImage
 }
-
-getImage()
