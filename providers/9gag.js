@@ -51,10 +51,10 @@ function getImage () {
             resolve({
               caption: post.title,
               from: post.url,
-              url: post.url
+              url: post.image
             })
           } else {
-            reject('no-image')
+            resolve()
           }
         })
         .catch(reject)
