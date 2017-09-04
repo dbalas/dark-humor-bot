@@ -91,7 +91,7 @@ module.exports = (bot) => {
 
   bot.on('/deschapar', (msg) => {
     let chatId = msg.chat.id
-    Actions.setActive(chatId, false)
+    Actions.setActive(chatId, true)
       .then(() => {
         bot.sendMessage(chatId, 'Bien!!!! B=====D💦')
       })

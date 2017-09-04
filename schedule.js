@@ -7,6 +7,7 @@ rule.hour = [new schedule.Range(8, 23)]
 rule.minute = 0
 
 module.exports = (bot) => {
+
   const job = schedule.scheduleJob(rule, () => {
     let date = new Date()
     let hour = date.getHours() + ':00'
