@@ -1,5 +1,6 @@
 const schedule = require('node-schedule')
 const Tumbrl = require('./providers/tumblr')
+const gag9 = require('./providers/9gag')
 const DB = require('./db')
 
 const rule = new schedule.RecurrenceRule()
@@ -18,7 +19,7 @@ module.exports = (bot) => {
     }, (err, groups) => {
       if (err) return console.error(err)
       // Get the shit here man
-      Tumbrl.getImage()
+      gag9.getImage()
         .then((image) => {
           groups.forEach((group) => {
             bot.sendPhoto(

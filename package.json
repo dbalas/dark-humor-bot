@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "nedb": "^1.8.0",
+    "node-9gag": "^0.2.4",
     "node-schedule": "^1.2.4",
     "telebot": "^1.2.3",
     "tumblr.js": "^1.1.1"

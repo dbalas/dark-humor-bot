@@ -1,19 +1,14 @@
 const _ = require('lodash')
-const tumblr = require('tumblr.js')
+const gag = require('node-9gag')
 const DB = require('../db')
-
-const client = tumblr.createClient({
-  consumer_key: 'M6KrqTV0ejQQ45u87S3HceSbAF3cpryj06ZLopBufks94GAi8P',
-  consumer_secret: 'BliolkSDOXKfRhamyT7bXWxHd3QXETs9bqIl21uk1aoGfs0f7g'
-})
 
 function _addMedia (post) {
   return new Promise((resolve, reject) => {
     DB.medias.insert({
       id: post.id,
-      type: 'tumblr',
-      from: post.post_url,
-      mediaDate: post.date,
+      type: '9gag',
+      from: post.url,
+      mediaDate: new Date(),
       date: new Date()
     }, (err) => {
       if (err) return reject(err)
@@ -26,7 +21,7 @@ function _filterPosts (posts) {
   return new Promise((resolve, reject) => {
     let ids = _.map(posts, post => post.id)
     DB.medias.find({
-      type: 'tumblr',
+      type: '9gag',
       id: { $in: ids }
     }, (err, medias) => {
       if (err) return reject(err)
@@ -38,32 +33,28 @@ function _filterPosts (posts) {
 }
 
 function getImage () {
-  let date = new Date()
-  date.setDate(date.getDate() - 1)
-  date = date.setHours(0)
   return new Promise((resolve, reject) => {
-    client.taggedPosts('black humour', {
-      before: date
-    }, (err, posts) => {
+    gag.section('darkhumor', (err, res) => {
       if (err) return reject(err)
-      let cleanPosts = _.filter(posts, { type: 'photo' })
+      let cleanPosts = _.filter(res, 'image')
+
       // Check medias
       _filterPosts(cleanPosts)
         .then((posts) => {
           // Sort by note (likes?)
-          posts = _.orderBy(posts, ['note_count', 'timestamp'], ['asc', 'desc'])
+          posts = _.orderBy(posts, ['points'], ['desc'])
           if (posts.length > 0) {
             let post = posts[0]
 
             // Save media for checking
             _addMedia(post)
             resolve({
-              caption: post.caption || post.summary,
-              from: post.short_url,
-              url: post.photos[0].original_size.url
+              caption: post.title,
+              from: post.url,
+              url: post.url
             })
           } else {
-            reject()
+            reject('no-image')
           }
         })
         .catch(reject)
