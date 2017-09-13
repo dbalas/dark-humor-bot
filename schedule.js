@@ -1,17 +1,34 @@
 const _ = require('lodash')
 const schedule = require('node-schedule')
-const Tumbrl = require('./providers/tumblr')
 const gag9 = require('./providers/9gag')
+const Reddit = require('./providers/reddit')
 const DB = require('./db')
 
 const rule = new schedule.RecurrenceRule()
 rule.hour = [new schedule.Range(8, 23)]
 rule.minute = 0
 
+function _addMedia (image) {
+  return new Promise((resolve, reject) => {
+    DB.medias.insert({
+      id: image.id,
+      type: image.type,
+      from: image.from,
+      caption: image.caption,
+      url: image.url,
+      mediaDate: new Date(),
+      date: new Date()
+    }, (err) => {
+      if (err) return reject(err)
+      resolve()
+    })
+  })
+}
+
 function sendPhoto(bot, id, image) {
   let extension = image.url.trim().toLowerCase()
   extension = extension.substr(extension.length - 3)
-  if (extension === 'gif') {
+  if (extension === 'gif' || extension === 'gifv') {
     bot.sendDocument(
       id,
       image.url, {
@@ -45,8 +62,9 @@ function _pickImage(images) {
   if (images.length === 1) {
     image = images[0]
   } else if (images.length > 1) {
-    let random = _.random(0, images.length - 1)
-    image = images[random]
+    let random = _.random(0, 5) // Más probabilidad para 9gag
+    if (random > 1) image = images[1]
+    else image = images[0]
   }
   return image
 }
@@ -63,16 +81,18 @@ module.exports = (bot) => {
       if (err) return console.error(err)
       // Get the shit here man
       Promise.all([
-        gag9.getImage(),
-        Tumbrl.getImage()
+        Reddit.getImage(),
+        gag9.getImage()
+        // Tumbrl.getImage()
       ]).then((images) => {
         let image = _pickImage(images)
         if (!image) throw new Error('no-image')
+        _addMedia(image)
         groups.forEach((group) => {
           bot.sendPhoto(
             group.id,
             image.url, {
-              caption: image.from,
+              caption: image.caption,
               serverDownload: true,
               notification: true
             }

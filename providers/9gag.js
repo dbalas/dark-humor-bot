@@ -2,21 +2,6 @@ const _ = require('lodash')
 const gag = require('node-9gag')
 const DB = require('../db')
 
-function _addMedia (post) {
-  return new Promise((resolve, reject) => {
-    DB.medias.insert({
-      id: post.id,
-      type: '9gag',
-      from: post.url,
-      mediaDate: new Date(),
-      date: new Date()
-    }, (err) => {
-      if (err) return reject(err)
-      resolve()
-    })
-  })
-}
-
 function _filterPosts (posts) {
   return new Promise((resolve, reject) => {
     let ids = _.map(posts, post => post.id)
@@ -47,9 +32,10 @@ function getImage () {
             let post = posts[0]
 
             // Save media for checking
-            _addMedia(post)
             resolve({
-              caption: post.title,
+              type: '9gag',
+              id: post.id,
+              caption: post.title + ' ' + post.url,
               from: post.url,
               url: post.image
             })

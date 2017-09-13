@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.16.2",
     "nedb": "^1.8.0",
     "node-9gag": "^0.2.4",
     "node-schedule": "^1.2.4",
