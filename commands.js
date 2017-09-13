@@ -62,7 +62,8 @@ module.exports = (bot) => {
     bot.sendMessage(chatId, `Comandous disponibeles:\n
       /daleh -> Configura el envio de farlopa y muestra el selector de horas.\n
       /ajuda -> Muestra este mensaje de mierda.\n
-      /infoplis-> Muestra info sobre el bot y su creador.\n
+      /infoplis -> Muestra info sobre el bot y su creador.\n
+      /dameargo -> Muestra mensaje de muerto de hambre para contribuir.\n
       /listarl -> Lista las horas configuradas y permite activar/desactivar una hora.\n
       /chapar -> Desactiva temporalmente el bot.\n
       /deschapar -> Activa de nuevo el bot.`)
