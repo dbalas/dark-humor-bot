@@ -71,12 +71,12 @@ module.exports = (bot) => {
   bot.on('/infoplis', (msg) => {
     let chatId = msg.chat.id
     bot.sendMessage(chatId, `Hola, soy un robot programado para enviar a este grupo bromas, memes o a lo que mi creador le de la gana, a ciertas horas eso sí, de momento es lo que hay.\nSi tienes alguna pregunta o sugerencia te la puedes meter por el culo o enviar un correo a tumornegrobot@gmail.com\n(ya existe!)`)
-    bot.sendMessage(chatId, `Si además te sientes generoso y quieres ayudar a mantener el servidor (o invitarme a una cerveza) puedes hacer tu donación en: https://www.paypal.me/TumorNegroBot`)
+    bot.sendMessage(chatId, `Si además te sientes generoso y quieres ayudar a mantener el servidor (o invitarme a una cerveza) puedes mandarme argo en: https://www.paypal.me/TumorNegroBot`)
   })
 
   bot.on('/dameargo', (msg) => {
     let chatId = msg.chat.id
-    bot.sendMessage(chatId, `Si te sientes generoso y quieres ayudar a mantener el servidor (o invitarme a una cerveza) puedes hacer tu donación en: https://www.paypal.me/TumorNegroBot`)
+    bot.sendMessage(chatId, `Si te sientes generoso y quieres ayudar a mantener el servidor (o invitarme a una cerveza) puedes mandarme argo en: https://www.paypal.me/TumorNegroBot`)
   })
 
   bot.on('/listarl', (msg) => {
