@@ -38,7 +38,7 @@ function sendPhoto(bot, id, image) {
       }).then((result) => {
       console.log('YEAH', result)
     }).catch((err) => {
-      console.error('GET IMAGE ERROR', err)
+      console.error('1. GET IMAGE ERROR', err)
     })
   } else {
     bot.sendPhoto(
@@ -50,7 +50,7 @@ function sendPhoto(bot, id, image) {
       }).then((result) => {
       console.log('YEAH', result)
     }).catch((err) => {
-      console.error('GET IMAGE ERROR', err)
+      console.error('2. GET IMAGE ERROR', err)
     })
   }
 
@@ -69,43 +69,46 @@ function _pickImage(images) {
   return image
 }
 
+function exec (bot) {
+  let date = new Date()
+  let hour = date.getHours() + ':00'
+  console.log('Invocation: ', hour)
+  DB.groups.find({
+    hours: hour,
+    isActive: true
+  }, (err, groups) => {
+    if (err) return console.error(err)
+    // Get the shit here man
+    Promise.all([
+      Reddit.getImage(),
+      gag9.getImage()
+      // Tumbrl.getImage()
+    ]).then((images) => {
+      let image = _pickImage(images)
+      if (!image) throw new Error('no-image')
+      _addMedia(image)
+      groups.forEach((group) => {
+        bot.sendPhoto(
+          group.id,
+          image.url, {
+            caption: image.caption,
+            serverDownload: true,
+            notification: true
+          }
+        ).then((result) => {
+          console.log('YEAH', result)
+        }).catch((err) => {
+          console.error(image, '3. GET IMAGE ERROR', err)
+        })
+      })
+    }).catch((err) => {
+      console.error(err)
+    })
+  })
+}
 module.exports = (bot) => {
   const job = schedule.scheduleJob(rule, () => {
-    let date = new Date()
-    let hour = date.getHours() + ':00'
-    console.log('Invocation: ', hour)
-    DB.groups.find({
-      hours: hour,
-      isActive: true
-    }, (err, groups) => {
-      if (err) return console.error(err)
-      // Get the shit here man
-      Promise.all([
-        Reddit.getImage(),
-        gag9.getImage()
-        // Tumbrl.getImage()
-      ]).then((images) => {
-        let image = _pickImage(images)
-        if (!image) throw new Error('no-image')
-        _addMedia(image)
-        groups.forEach((group) => {
-          bot.sendPhoto(
-            group.id,
-            image.url, {
-              caption: image.caption,
-              serverDownload: true,
-              notification: true
-            }
-          ).then((result) => {
-            console.log('YEAH', result)
-          }).catch((err) => {
-            console.error('GET IMAGE ERROR', err)
-          })
-        })
-      }).catch((err) => {
-        console.error(err)
-      })
-    })
+    exec(bot)
   })
 
   let date = new Date(job.nextInvocation())

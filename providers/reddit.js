@@ -40,9 +40,9 @@ function getImage () {
               resolve({
                 type: 'reddit',
                 id: post.data.id,
-                caption: post.data.title + ' - ' + post.data.url,
-                from: post.data.url,
-                url: image
+                caption: post.data.title + ' - ' + `https://reddit.com${post.data.permalink}`,
+                from: `https://reddit.com${post.data.permalink}`,
+                url: post.data.url
               })
             } else {
               resolve()
