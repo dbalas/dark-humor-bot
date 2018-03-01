@@ -69,10 +69,14 @@ function _pickImage(images) {
   return image
 }
 
+let prevHour;
 function exec (bot) {
   let date = new Date()
   let hour = date.getHours() + ':00'
   console.log('Invocation: ', hour)
+  // Nasty guard
+  if (prevHour === hour) return
+  prevHour = hour
   DB.groups.find({
     hours: hour,
     isActive: true
