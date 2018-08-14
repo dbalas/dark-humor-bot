@@ -6,7 +6,7 @@ module.exports = {
       let id = msg.message.chat.id
       DB.groups.update({ id }, { $addToSet: { hours: hour } }, {}, (err) => {
         if (err) return reject(err)
-        bot.sendMessage(id, `${hour} analdida 👍`)
+        bot.sendMessage(id, `${hour} added 👍`)
         resolve()
       })
     })

@@ -8,7 +8,14 @@ function P (data) {
   return JSON.parse(data)
 }
 
-const HOURS = [['7:00', '8:00', '9:00'], ['10:00', '11:00', '12:00'], ['13:00', '14:00', '15:00'], ['16:00', '17:00', '18:00'], ['19:00', '20:00', '21:00'], ['22:00', '23:00']]
+const HOURS = [
+  ['7:00', '8:00', '9:00'],
+  ['10:00', '11:00', '12:00'],
+  ['13:00', '14:00', '15:00'],
+  ['16:00', '17:00', '18:00'],
+  ['19:00', '20:00', '21:00'],
+  ['22:00', '23:00']
+]
 
 function _showToggleHours (bot, hours) {
   let hourButtons = HOURS.map((hourRow) => {
@@ -22,15 +29,14 @@ function _showToggleHours (bot, hours) {
       })
     })
   })
-
   return bot.inlineKeyboard(hourButtons)
 }
 
-function _listarl (bot, chatId) {
+function _list (bot, chatId) {
   Actions.getHours(chatId)
     .then((hours) => {
       let replyMarkup = _showToggleHours(bot, hours)
-      bot.sendMessage(chatId, 'Horicas ricas hoiga', { replyMarkup })
+      bot.sendMessage(chatId, 'Hours', { replyMarkup })
         .then(() => {})
         .catch((err) => {
           console.error(err)
@@ -42,13 +48,13 @@ function _listarl (bot, chatId) {
 }
 
 module.exports = (bot) => {
-  bot.on('/daleh', (msg) => {
+  bot.on('/init', (msg) => {
     let chatId = msg.chat.id
     Actions.createSchedule(chatId)
       .then((schedule) => {
-        bot.sendMessage(chatId, '¡Hola! Soy el bot de Tumor Negro, me encargaré de mandarte mierda de la buena cada día. \n Puedes ver todos los comandos y más info en /ajuda')
+        bot.sendMessage(chatId, '¡Hello! I\'m a dark humor bot, I will send you good shit everyday. \n You can see all commands and more info with command /help')
         setTimeout(() => {
-          _listarl(bot, chatId)
+          _list(bot, chatId)
         }, 1000)
       })
       .catch((err) => {
@@ -57,89 +63,76 @@ module.exports = (bot) => {
       })
   })
 
-  bot.on('/ajuda', (msg) => {
+  bot.on('/help', (msg) => {
     let chatId = msg.chat.id
-    bot.sendMessage(chatId, `Comandous disponibeles:\n
-      /daleh -> Configura el envio de farlopa y muestra el selector de horas.\n
-      /ajuda -> Muestra este mensaje de mierda.\n
-      /infoplis -> Muestra info sobre el bot y su creador.\n
-      /dameargo -> Muestra mensaje de muerto de hambre para contribuir.\n
-      /listarl -> Lista las horas configuradas y permite activar/desactivar una hora.\n
-      /chapar -> Desactiva temporalmente el bot.\n
-      /deschapar -> Activa de nuevo el bot.`)
+    bot.sendMessage(chatId, `Commands:\n
+      /init -> Make initial config and show the hour selector.\n
+      /help -> Shows this shit message.\n
+      /info -> Shows information about the bot and its creator..\n
+      /donate -> Shows info for make a donation.\n
+      /list -> List and manage configurated hours.\n
+      /enable -> Bot enable.\n
+      /disable -> Bot disable.`)
   })
 
-  bot.on('/infoplis', (msg) => {
+  bot.on('/info', (msg) => {
     let chatId = msg.chat.id
-    bot.sendMessage(chatId, `Hola, soy un robot programado para enviar a este grupo bromas, memes o a lo que mi creador le de la gana, a ciertas horas eso sí, de momento es lo que hay.\nSi tienes alguna pregunta o sugerencia te la puedes meter por el culo o enviar un correo a tumornegrobot@gmail.com\n(ya existe!)`)
-    bot.sendMessage(chatId, `Si además te sientes generoso y quieres ayudar a mantener el servidor (o invitarme a una cerveza) puedes mandarme argo en: https://www.paypal.me/TumorNegroBot`)
+    bot.sendMessage(chatId, `Hello, I'm a bot programmed to send to this group jokes, memes or whatever my creator wants at certain hours.`)
   })
 
-  bot.on('/dameargo', (msg) => {
+  /* bot.on('/donate', (msg) => {
     let chatId = msg.chat.id
-    bot.sendMessage(chatId, `Si te sientes generoso y quieres ayudar a mantener el servidor (o invitarme a una cerveza) puedes mandarme argo en: https://www.paypal.me/TumorNegroBot`)
+    bot.sendMessage(chatId, ``)
+  }) */
+
+  bot.on('/list', (msg) => {
+    let chatId = msg.chat.id
+    _list(bot, chatId)
   })
 
-  bot.on('/listarl', (msg) => {
+  bot.on('/disable', (msg) => {
     let chatId = msg.chat.id
-    _listarl(bot, chatId)
+    Actions.setActive(chatId, false).then(() => {
+      bot.sendMessage(chatId, 'Ok... 🖕')
+    }).catch((err) => {
+      console.error(err)
+    })
   })
 
-  bot.on('/chapar', (msg) => {
+  bot.on('/enable', (msg) => {
     let chatId = msg.chat.id
-    Actions.setActive(chatId, false)
-      .then(() => {
-        bot.sendMessage(chatId, 'Vale 🖕')
-      })
-      .catch((err) => {
-        console.error(err)
-      })
-  })
-
-  bot.on('/deschapar', (msg) => {
-    let chatId = msg.chat.id
-    Actions.setActive(chatId, true)
-      .then(() => {
-        bot.sendMessage(chatId, 'Bien!!!! B=====D💦')
-      })
-      .catch((err) => {
-        console.error(err)
-      })
+    Actions.setActive(chatId, true).then(() => {
+      bot.sendMessage(chatId, 'Good!!!! B=====D💦')
+    }).catch((err) => {
+      console.error(err)
+    })
   })
 
   bot.on('callbackQuery', msg => {
     let chatId = msg.message.chat.id
     let payload = P(msg.data)
-    Actions[payload.action](bot, msg, payload.data)
-      .then((result) => {
-        bot.answerCallbackQuery(msg.id)
-        // Nasty
-        if (payload.action === 'toggleHour') {
-          Actions.getHours(chatId)
-            .then((hours) => {
-              let replyMarkup = _showToggleHours(bot, hours)
-              bot.editMessageReplyMarkup({
-                chatId: chatId,
-                messageId: msg.message.message_id
-              }, { replyMarkup })
-                .then(() => {})
-                .catch((err) => {
-                  console.error(err)
-                })
-            })
-            .catch((err) => {
-              console.error(err)
-            })
-        }
-      })
-      .catch((err) => {
-        bot.sendMessage(chatId, 'ERROR')
-        console.error(err)
-      })
-  })
-
-  bot.on('/heil_hitler', (msg) => {
-    let chatId = msg.chat.id
-    bot.sendMessage(chatId, 'Heil Marcos!')
+    Actions[payload.action](bot, msg, payload.data).then(() => {
+      bot.answerCallbackQuery(msg.id)
+      if (payload.action === 'toggleHour') {
+        Actions.getHours(chatId)
+          .then((hours) => {
+            let replyMarkup = _showToggleHours(bot, hours)
+            bot.editMessageReplyMarkup({
+              chatId: chatId,
+              messageId: msg.message.message_id
+            }, { replyMarkup })
+              .then(() => {})
+              .catch((err) => {
+                console.error(err)
+              })
+          })
+          .catch((err) => {
+            console.error(err)
+          })
+      }
+    }).catch((err) => {
+      bot.sendMessage(chatId, 'ERROR')
+      console.error(err)
+    })
   })
 }

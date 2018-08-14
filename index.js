@@ -1,4 +1,5 @@
-const bot = require('./Telebot')
+require('dotenv').config()
+const bot = require('./telebot')
 const Commands = require('./commands')
 const Scheduler = require('./schedule')
 
