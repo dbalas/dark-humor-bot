@@ -42,7 +42,7 @@ module.exports = {
   getHours (id) {
     return new Promise((resolve, reject) => {
       DB.groups.findOne({ id }, (err, group) => {
-        if (err) return reject(err)
+        if (err || group == null) return reject(err)
         resolve(group.hours)
       })
     })
