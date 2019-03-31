@@ -2,6 +2,9 @@ const _ = require('lodash')
 const Axios = require('axios')
 const DB = require('../db')
 
+const REDDIT_URL = 'https://www.reddit.com/r/ImGoingToHellForThis2/top.json?sort=top&t=week'
+
+
 function _filterPosts (posts) {
   return new Promise((resolve, reject) => {
     let ids = _.map(posts, post => post.data.id)
@@ -19,7 +22,7 @@ function _filterPosts (posts) {
 
 function getImage () {
   return new Promise((resolve, reject) => {
-    Axios.get('https://www.reddit.com/r/ImGoingToHellForThis2/top.json')
+    Axios.get(REDDIT_URL)
       .then(({ data }) => {
           let cleanPosts = _.filter(data.data.children, (post) => {
               return !post.data.is_video && 
