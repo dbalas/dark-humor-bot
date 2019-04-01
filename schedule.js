@@ -1,7 +1,8 @@
 const _ = require('lodash')
 const schedule = require('node-schedule')
+const Reddit = require('./providers/reddit')
+const Reddit2 = require('./providers/reddit2')
 const gag9 = require('./providers/9gag')
-const Reddit = require('./providers/reddit2')
 const DB = require('./db')
 
 const rule = new schedule.RecurrenceRule()
@@ -84,7 +85,8 @@ function exec (bot) {
     if (err) return console.error(err)
     // Get the shit here man
     Promise.all([
-      Reddit.getImage()
+      Reddit.getImage(),
+      Reddit2.getImage()
       // gag9.getImage()
       // Tumbrl.getImage()
     ]).then((images) => {
